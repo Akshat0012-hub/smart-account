@@ -43,12 +43,20 @@ function validateUserOp(UserOperation calldata userOp) external view onlyEntryPo
 
     function execute(bytes calldata callData)external onlyEntryPoint
     {
-        (address target, bytes memory data) =
-            abi.decode(callData,(address,bytes));
+    
+(address target,uint256 value,bytes memory data)=abi.decode(callData,(address,uint256,bytes));
 
-        (bool success,) = target.call(data);
+        (bool success,) = target.call{value: value}(data);
 
         require(success,"CALL_FAILED");
         nonce++;
     }
-}
+    function executebatch(bytes calldata callData)external onlyEntryPoint{
+        (address[]memory target,uint256[] memory values ,bytes[] memory datas ) = abi.decode(callData,(address[],uint256[],bytes[]));
+        for(uint256 i=0;i<target.length;i++){
+            (bool success,)=target[i].call{value:values[i]}(datas[i]);
+            require(success,"Call Failed");
+        }
+nonce++;
+    }
+}   
