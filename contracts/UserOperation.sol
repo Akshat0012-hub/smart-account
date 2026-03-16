@@ -7,4 +7,5 @@ struct UserOperation {
     bytes callData;
     bytes signature;
     address paymaster;
+    
 }
